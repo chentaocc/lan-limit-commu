@@ -1,0 +1,50 @@
+apply from: "${gradleConfigUrl}/gradle/application.gradle"
+apply from: "${gradleConfigUrl}/gradle/upload.gradle"
+
+android {
+    signingConfigs {
+        release {
+            keyAlias 'evideostb'
+            keyPassword 'jtylyfb'
+            storeFile file('../platform_signature/evideostb.keystore')
+            storePassword 'jtylyfb'
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+        }
+
+        debug {
+            signingConfig signingConfigs.release
+        }
+    }
+
+    dexOptions {
+        jumboMode true
+    }
+
+    defaultConfig {
+        multiDexEnabled true
+    }
+
+    buildToolsVersion '27.0.3'
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile libs.appcompat
+    compile evideo.utils
+    compile evideo.openPlatform
+    compile evideo.newDataCenter
+    compile evideo.uiComponent
+    compile evideo.serviceManager2
+    compile "com.google.code.gson:gson:$gsonVersion"
+
+    testCompile test.junit
+    androidTestCompile(test.espresso, {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+}

@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">evideo-lan-limit</string>
+    <string name="lan_limit_tip">当前局域网内机顶盒数已超过10台，无法继续使用，若要继续使用请关闭其他机顶盒。</string>
+</resources>

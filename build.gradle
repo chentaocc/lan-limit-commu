@@ -1,0 +1,63 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        jcenter()
+        maven { url 'https://maven.google.com'}
+    }
+    dependencies {
+        classpath 'me.tatarka:gradle-retrolambda:3.2.3'
+        classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.3.0'
+        classpath 'com.android.tools.build:gradle:2.3.2'
+        classpath fileTree(dir:'plugins', include:['*.jar'])
+    }
+    // Exclude the version that the android plugin depends on.
+    configurations.classpath.exclude group: 'com.android.tools.external.lombok'
+}
+
+allprojects {
+
+    repositories {
+        def nexusUrl = System.properties['nexusUrl']
+        maven { url "${nexusUrl}/repository/maven-public/" }
+        jcenter()
+        maven { url 'https://maven.google.com'}
+        maven { url "https://www.jitpack.io" }
+        maven { url "https://raw.githubusercontent.com/HyphenateInc/Hyphenate-SDK-Android/master/repository" }
+        maven { url 'http://192.168.74.168:8081/repository/evideo-releases/' }
+    }
+
+    ext {
+        getPropertyOrDefault = { key, defValue ->
+            if (project.getProperties().containsKey(key)) {
+                return project.getProperties().get(key)
+            } else {
+                return defValue
+            }
+        }
+        gradleConfigUrl = System.properties['gradleConfigUrl']
+    }
+
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs.add('-Xbootclasspath/p:android_framework/android_framework.jar')
+        }
+    }
+}
+
+subprojects { project ->
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.1'
+    }
+
+    // conf
+    group = POM_GROUP_ID
+    version = POM_VERSION
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
